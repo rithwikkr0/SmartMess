@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SmartMess Pro | Login, Signup & Dashboard</title>
+  <style>
+    :root {
+      --bg: #eef4ff;
+      --surface: #ffffff;
+      --surface-2: #f8fbff;
+      --text: #152033;
+      --muted: #64748b;
+      --border: #dbe6f3;
+      --primary: #0ea5e9;
+      --primary-2: #2563eb;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+      --radius: 20px;
+    }
+
+    body.dark {
+      --bg: #0b1220;
+      --surface: #111b2e;
+      --surface-2: #16243c;
+      --text: #e8eefc;
+      --muted: #a8b3c7;
+      --border: #24324b;
+      --primary: #38bdf8;
+      --primary-2: #60a5fa;
+      --shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(140deg, var(--bg), #dff3ff 45%, #f4f7ff 100%);
+      color: var(--text);
+      min-height: 100vh;
+      transition: 0.3s ease;
+    }
+    body.dark {
+      background: linear-gradient(140deg, #07111f, #0d1a2c 45%, #091321 100%);
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button, input, select, textarea { font: inherit; }
+    .hidden { display: none !important; }
+
+    .auth-shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 20px;
+      padding: 28px;
+    }
+
+    .auth-side,
+    .auth-panel,
+    .card,
+    .stat,
+    .meal-card,
+    .history-item,
+    .feature-chip,
+    .scanner-box,
+    .feedback-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+
+    .auth-side {
+      border-radius: 28px;
+      padding: 36px;
+      background: linear-gradient(135deg, rgba(14,165,233,0.15), rgba(37,99,235,0.12)), var(--surface);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .auth-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      font-size: 24px;
+      margin-bottom: 24px;
+    }
+
+    .brand-badge {
+      width: 50px;
+      height: 50px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      display: grid;
+      place-items: center;
+      color: white;
+      font-size: 24px;
+    }
+
+    .hero-title {
+      font-size: clamp(30px, 5vw, 54px);
+      line-height: 1.06;
+      margin-bottom: 14px;
+    }
+
+    .hero-text {
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.7;
+      max-width: 580px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-top: 28px;
+    }
+
+    .feature-chip {
+      border-radius: 18px;
+      padding: 18px;
+      background: var(--surface-2);
+    }
+
+    .feature-chip strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 15px;
+    }
+
+    .feature-chip p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .testimonial {
+      margin-top: 26px;
+      padding: 22px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.55);
+      border: 1px solid var(--border);
+    }
+
+    body.dark .testimonial {
+      background: rgba(255,255,255,0.03);
+    }
+
+    .testimonial p { color: var(--muted); line-height: 1.6; }
+
+    .auth-panel {
+      border-radius: 28px;
+      padding: 26px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .auth-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .mode-toggle {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 10px 14px;
+      background: var(--surface-2);
+      cursor: pointer;
+      color: var(--text);
+    }
+
+    .switcher {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: var(--surface-2);
+      border-radius: 16px;
+      padding: 6px;
+      margin-bottom: 20px;
+      border: 1px solid var(--border);
+    }
+
+    .switcher button {
+      padding: 12px;
+      border-radius: 12px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .switcher button.active {
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      color: white;
+    }
+
+    .auth-form h2 { font-size: 28px; margin-bottom: 8px; }
+    .auth-form p { color: var(--muted); margin-bottom: 20px; }
+
+    .field { margin-bottom: 14px; }
+    .field label {
+      display: block;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 7px;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      padding: 14px 15px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      outline: none;
+      background: var(--surface-2);
+      color: var(--text);
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(14,165,233,0.12);
+    }
+
+    .auth-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-top: 6px;
+      margin-bottom: 18px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px 18px;
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      font-weight: 800;
+      transition: 0.2s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      color: white;
+    }
+
+    .btn-primary:hover,
+    .btn-secondary:hover,
+    .small-btn:hover { transform: translateY(-1px); }
+
+    .btn-secondary {
+      background: var(--surface-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .small-btn {
+      border: none;
+      border-radius: 12px;
+      padding: 10px 14px;
+      cursor: pointer;
+      font-weight: 700;
+      background: var(--surface-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .auth-note {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .app-shell { display: none; min-height: 100vh; }
+    .app-shell.active { display: block; }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(12px);
+      background: color-mix(in srgb, var(--surface) 82%, transparent);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .nav-left,
+    .nav-right,
+    .nav-links { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+    .logo {
+      font-weight: 900;
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-links button {
+      background: var(--surface-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 10px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .nav-links button.active {
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      color: white;
+      border-color: transparent;
+    }
+
+    .pill {
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(14,165,233,0.18));
+      border: 1px solid var(--border);
+      font-weight: 800;
+    }
+
+    .container {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 22px;
+    }
+
+    .announcement {
+      background: linear-gradient(135deg, rgba(245,158,11,0.18), rgba(239,68,68,0.12));
+      border: 1px solid rgba(245,158,11,0.2);
+      padding: 16px 18px;
+      border-radius: 18px;
+      margin-bottom: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+    }
+
+    .stats-grid,
+    .meals-grid,
+    .admin-stats { display: grid; gap: 16px; }
+
+    .stats-grid { grid-template-columns: repeat(4, 1fr); margin-bottom: 18px; }
+    .admin-stats { grid-template-columns: repeat(3, 1fr); margin-bottom: 18px; }
+    .meals-grid { grid-template-columns: repeat(2, 1fr); }
+
+    .stat,
+    .card,
+    .meal-card,
+    .scanner-box,
+    .feedback-box {
+      border-radius: 22px;
+      padding: 22px;
+    }
+
+    .stat span,
+    .muted,
+    small { color: var(--muted); }
+    .stat h3 { font-size: 28px; margin-top: 10px; }
+    .section-title { margin-bottom: 14px; font-size: 23px; }
+
+    .meal-search {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 0.8fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .meal-card {
+      background: linear-gradient(180deg, var(--surface), var(--surface-2));
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .meal-card::after {
+      content: "";
+      position: absolute;
+      width: 140px;
+      height: 140px;
+      right: -40px;
+      top: -45px;
+      border-radius: 50%;
+      background: rgba(14,165,233,0.08);
+    }
+
+    .meal-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(16,185,129,0.13);
+      color: var(--success);
+      font-weight: 800;
+      font-size: 12px;
+    }
+
+    .meal-card ul {
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .history-list { display: grid; gap: 12px; }
+    .history-item {
+      padding: 14px 16px;
+      border-radius: 18px;
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .status {
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .status.active { color: #92400e; background: #fef3c7; }
+    .status.used { color: #065f46; background: #d1fae5; }
+    .status.cancelled { color: #991b1b; background: #fee2e2; }
+
+    .qr-box {
+      min-height: 240px;
+      border: 2px dashed var(--border);
+      border-radius: 20px;
+      background: var(--surface-2);
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 18px;
+    }
+
+    .qr-box img {
+      width: 180px;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 16px;
+      margin-top: 8px;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 14px 12px;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+
+    th {
+      color: var(--muted);
+      background: var(--surface-2);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .scanner-box,
+    .feedback-box { max-width: 760px; margin: 0 auto; }
+
+    .feedback-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .rating {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .rating button {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      cursor: pointer;
+      color: var(--text);
+      font-weight: 800;
+    }
+
+    .rating button.selected {
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      color: white;
+      border-color: transparent;
+    }
+
+    .footer-note {
+      margin-top: 18px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    @media (max-width: 1080px) {
+      .auth-shell,
+      .dashboard-grid { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .admin-stats { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 760px) {
+      .hero-grid,
+      .feedback-grid,
+      .meal-search,
+      .meals-grid,
+      .stats-grid,
+      .admin-stats { grid-template-columns: 1fr; }
+      .auth-shell { padding: 14px; }
+      .auth-side,
+      .auth-panel,
+      .card,
+      .scanner-box,
+      .feedback-box,
+      .meal-card { padding: 18px; }
+      nav { padding: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <section class="auth-shell" id="authShell">
+    <div class="auth-side">
+      <div>
+        <div class="auth-brand">
+          <div class="brand-badge">🍽️</div>
+          <div>SmartMess Pro</div>
+        </div>
+        <h1 class="hero-title">Smart campus meal booking with a modern login & signup system.</h1>
+        <p class="hero-text">
+          Manage food coupons, wallet, QR entry, student dashboard, staff verification, admin reports,
+          loyalty points, announcements, feedback, and meal filtering in one attractive website.
+        </p>
+        <div class="hero-grid">
+          <div class="feature-chip">
+            <strong>Quick Login</strong>
+            <p>Student, admin, and staff can enter through one clean authentication page.</p>
+          </div>
+          <div class="feature-chip">
+            <strong>Smart Wallet</strong>
+            <p>Add balance, book meals instantly, and track points with live counters.</p>
+          </div>
+          <div class="feature-chip">
+            <strong>QR Entry Pass</strong>
+            <p>Get a booking ID and QR code for faster mess entry without long queues.</p>
+          </div>
+          <div class="feature-chip">
+            <strong>Extra Features</strong>
+            <p>Dark mode, meal search, daily menu tags, feedback form, and booking history.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial">
+        <strong style="display:block; margin-bottom:8px;">Why this version is better</strong>
+        <p>
+          This upgraded design adds a proper authentication screen, reusable user accounts, logout,
+          bonus student features, better admin view, staff scanner result panel, and a cleaner premium UI.
+        </p>
+      </div>
+    </div>
+
+    <div class="auth-panel">
+      <div class="auth-top">
+        <div>
+          <strong style="font-size:22px;">Welcome back</strong>
+          <div class="muted" style="margin-top:4px;">Login or create a new account to continue</div>
+        </div>
+        <button class="mode-toggle" id="themeToggleAuth">🌙 Theme</button>
+      </div>
+
+      <div class="switcher">
+        <button class="active" id="loginTabBtn" onclick="switchAuthTab('login')">Login</button>
+        <button id="signupTabBtn" onclick="switchAuthTab('signup')">Sign Up</button>
+      </div>
+
+      <form id="loginForm" class="auth-form">
+        <h2>Login</h2>
+        <p>Use your email and password to access SmartMess.</p>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="loginEmail" placeholder="student@college.com" required />
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input type="password" id="loginPassword" placeholder="Enter password" required />
+        </div>
+        <div class="field">
+          <label>Role</label>
+          <select id="loginRole">
+            <option value="student">Student</option>
+            <option value="admin">Admin</option>
+            <option value="staff">Staff</option>
+          </select>
+        </div>
+        <div class="auth-row">
+          <label><input type="checkbox" id="rememberMe" /> Remember me</label>
+          <button type="button" class="small-btn" onclick="forgotPassword()">Forgot Password?</button>
+        </div>
+        <button type="submit" class="btn btn-primary">Login to Dashboard</button>
+        <div class="auth-note">Demo default login: <b>student@smartmess.com</b> / <b>1234</b></div>
+      </form>
+
+      <form id="signupForm" class="auth-form hidden">
+        <h2>Create Account</h2>
+        <p>Register a new account for students, admins, or staff members.</p>
+        <div class="field">
+          <label>Full Name</label>
+          <input type="text" id="signupName" placeholder="Enter full name" required />
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="signupEmail" placeholder="name@college.com" required />
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input type="password" id="signupPassword" placeholder="Create password" required />
+        </div>
+        <div class="field">
+          <label>Role</label>
+          <select id="signupRole">
+            <option value="student">Student</option>
+            <option value="admin">Admin</option>
+            <option value="staff">Staff</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Create Account</button>
+        <div class="auth-note">After signup, you can login immediately using the same email and password.</div>
+      </form>
+    </div>
+  </section>
+
+  <section class="app-shell" id="appShell">
+    <nav>
+      <div class="nav-left">
+        <div class="logo">🍽️ SmartMess Pro</div>
+        <div class="nav-links">
+          <button class="active" data-view="student" onclick="switchView('student', this)">Student Dashboard</button>
+          <button data-view="admin" onclick="switchView('admin', this)">Admin Panel</button>
+          <button data-view="staff" onclick="switchView('staff', this)">Staff Scanner</button>
+          <button data-view="feedback" onclick="switchView('feedback', this)">Feedback</button>
+        </div>
+      </div>
+      <div class="nav-right">
+        <div class="pill" id="walletDisplay">Wallet: ₹500</div>
+        <div class="pill" id="pointsDisplay">Points: 0</div>
+        <div class="pill" id="userDisplay">Guest</div>
+        <button class="small-btn" id="themeToggleApp">🌙 Theme</button>
+        <button class="small-btn" onclick="logoutUser()">Logout</button>
+      </div>
+    </nav>
+
+    <div class="container">
+      <div class="announcement">
+        <div>
+          <strong>📢 Today’s Announcement:</strong>
+          <span id="announcementText">Lunch special available from 12:30 PM to 1:30 PM. Pre-book now to avoid queue.</span>
+        </div>
+        <button class="small-btn" onclick="dismissAnnouncement()">Dismiss</button>
+      </div>
+
+      <section id="student-view" class="view-section">
+        <div class="stats-grid">
+          <div class="stat">
+            <span>Wallet Balance</span>
+            <h3 id="walletStat">₹500</h3>
+          </div>
+          <div class="stat">
+            <span>Total Bookings</span>
+            <h3 id="bookingCountStat">0</h3>
+          </div>
+          <div class="stat">
+            <span>Loyalty Points</span>
+            <h3 id="pointStat">0</h3>
+          </div>
+          <div class="stat">
+            <span>Saved Time</span>
+            <h3 id="timeSavedStat">0 min</h3>
+          </div>
+        </div>
+
+        <div class="dashboard-grid">
+          <div>
+            <div class="card">
+              <div class="row" style="margin-bottom:14px;">
+                <h2 class="section-title">Available Meals</h2>
+                <button class="small-btn" onclick="addMoney()">+ Add ₹100</button>
+              </div>
+
+              <div class="meal-search">
+                <input type="text" id="mealSearch" placeholder="Search meal or items..." oninput="renderMeals()" />
+                <select id="mealCategory" onchange="renderMeals()">
+                  <option value="all">All Categories</option>
+                  <option value="veg">Veg</option>
+                  <option value="high-protein">High Protein</option>
+                  <option value="snacks">Snacks</option>
+                </select>
+                <select id="mealSort" onchange="renderMeals()">
+                  <option value="default">Sort</option>
+                  <option value="low-high">Price Low to High</option>
+                  <option value="high-low">Price High to Low</option>
+                </select>
+              </div>
+
+              <div class="meals-grid" id="mealContainer"></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="card">
+              <h2 class="section-title">Your Entry Pass</h2>
+              <div class="qr-box" id="qrBox">
+                <div>
+                  <p class="muted">No active booking yet</p>
+                  <small>Book a meal to generate QR code and booking ID</small>
+                </div>
+              </div>
+              <div style="margin-top:12px; font-weight:800; text-align:center;" id="qrText"></div>
+              <div class="footer-note" id="countdownText">No countdown active</div>
+            </div>
+
+            <div class="card">
+              <div class="row" style="margin-bottom:12px;">
+                <h2 class="section-title">My Recent Bookings</h2>
+                <button class="small-btn" onclick="clearHistory()">Clear</button>
+              </div>
+              <div class="history-list" id="studentHistory"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="admin-view" class="view-section hidden">
+        <div class="admin-stats">
+          <div class="stat">
+            <span>Total Revenue</span>
+            <h3 id="revenueStat">₹0</h3>
+          </div>
+          <div class="stat">
+            <span>Active Bookings</span>
+            <h3 id="activeBookingStat">0</h3>
+          </div>
+          <div class="stat">
+            <span>Meals Served</span>
+            <h3 id="usedBookingStat">0</h3>
+          </div>
+        </div>
+
+        <div class="dashboard-grid">
+          <div class="card">
+            <h2 class="section-title">Live Booking Overview</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Booking ID</th>
+                  <th>User</th>
+                  <th>Meal</th>
+                  <th>Time</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="adminBookingsList"></tbody>
+            </table>
+          </div>
+
+          <div class="card">
+            <h2 class="section-title">Admin Controls</h2>
+            <div class="field">
+              <label>Post Global Announcement</label>
+              <input type="text" id="announcementInput" placeholder="e.g. Mess closed tomorrow morning" />
+            </div>
+            <button class="btn btn-primary" onclick="updateAnnouncement()">Send Notification</button>
+            <div style="height:12px"></div>
+            <button class="btn btn-secondary" onclick="downloadReport()">Download Revenue Report</button>
+            <div style="height:12px"></div>
+            <button class="btn btn-secondary" onclick="seedDemoBookings()">Generate Demo Bookings</button>
+            <div class="footer-note">Admin extra features: revenue summary, live notification banner, and quick demo data.</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="staff-view" class="view-section hidden">
+        <div class="scanner-box">
+          <h2 class="section-title">QR Scanner / Manual Booking Verification</h2>
+          <p class="muted" style="margin-bottom:16px;">Enter booking ID to verify the student and allow mess entry.</p>
+          <div class="field">
+            <label>Booking ID</label>
+            <input type="text" id="scanInput" placeholder="Enter booking ID" />
+          </div>
+          <button class="btn btn-primary" onclick="verifyEntry()">Verify & Allow Entry</button>
+          <div id="scanResult" class="footer-note" style="margin-top:18px;"></div>
+        </div>
+      </section>
+
+      <section id="feedback-view" class="view-section hidden">
+        <div class="feedback-box">
+          <h2 class="section-title">Meal Feedback & Suggestions</h2>
+          <p class="muted" style="margin-bottom:16px;">Collect student feedback to improve the mess experience.</p>
+          <div class="feedback-grid">
+            <div>
+              <div class="field">
+                <label>Your Name</label>
+                <input type="text" id="feedbackName" placeholder="Enter your name" />
+              </div>
+              <div class="field">
+                <label>Feedback Message</label>
+                <textarea id="feedbackText" rows="6" placeholder="Write suggestion or review..."></textarea>
+              </div>
+            </div>
+            <div>
+              <label style="display:block; font-size:14px; font-weight:700; margin-bottom:8px;">Rate Today’s Mess Service</label>
+              <div class="rating" id="ratingWrap">
+                <button type="button" onclick="setRating(1)">1</button>
+                <button type="button" onclick="setRating(2)">2</button>
+                <button type="button" onclick="setRating(3)">3</button>
+                <button type="button" onclick="setRating(4)">4</button>
+                <button type="button" onclick="setRating(5)">5</button>
+              </div>
+              <div class="field" style="margin-top:18px;">
+                <label>Preferred Improvement</label>
+                <select id="improvementArea">
+                  <option>Food Quality</option>
+                  <option>Queue Management</option>
+                  <option>More Meal Variety</option>
+                  <option>Hygiene</option>
+                  <option>App Experience</option>
+                </select>
+              </div>
+              <button class="btn btn-primary" onclick="submitFeedback()">Submit Feedback</button>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:18px; padding:18px;">
+            <h3 style="margin-bottom:10px;">Recent Feedback</h3>
+            <div class="history-list" id="feedbackList"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <script>
+    const defaultAccounts = [
+      { name: 'Demo Student', email: 'student@smartmess.com', password: '1234', role: 'student' },
+      { name: 'Demo Admin', email: 'admin@smartmess.com', password: '1234', role: 'admin' },
+      { name: 'Demo Staff', email: 'staff@smartmess.com', password: '1234', role: 'staff' }
+    ];
+
+    const mealData = [
+      { name: 'Breakfast', items: 'Idli, Vada, Tea', slot: '7:30 AM - 8:30 AM', price: 40, category: 'veg', tag: 'Morning Fresh' },
+      { name: 'Lunch', items: 'Paneer, Rice, Dal', slot: '12:30 PM - 1:30 PM', price: 60, category: 'high-protein', tag: 'Best Seller' },
+      { name: 'Evening Snacks', items: 'Samosa, Tea, Banana', slot: '4:30 PM - 5:15 PM', price: 30, category: 'snacks', tag: 'Quick Bite' },
+      { name: 'Dinner', items: 'Chapati, Curry, Rice', slot: '7:30 PM - 8:30 PM', price: 55, category: 'veg', tag: 'Popular' }
+    ];
+
+    let selectedRating = 0;
+    let countdownInterval = null;
+
+    function getAccounts() {
+      const stored = JSON.parse(localStorage.getItem('smartMessAccounts') || 'null');
+      if (stored && stored.length) return stored;
+      localStorage.setItem('smartMessAccounts', JSON.stringify(defaultAccounts));
+      return defaultAccounts;
+    }
+
+    function saveAccounts(accounts) {
+      localStorage.setItem('smartMessAccounts', JSON.stringify(accounts));
+    }
+
+    function getBookings() {
+      return JSON.parse(localStorage.getItem('smartMessBookings') || '[]');
+    }
+
+    function saveBookings(bookings) {
+      localStorage.setItem('smartMessBookings', JSON.stringify(bookings));
+    }
+
+    function getWallet() {
+      return parseInt(localStorage.getItem('smartMessWallet') || '500', 10);
+    }
+
+    function setWallet(value) {
+      localStorage.setItem('smartMessWallet', value);
+    }
+
+    function getPoints() {
+      return parseInt(localStorage.getItem('smartMessPoints') || '0', 10);
+    }
+
+    function setPoints(value) {
+      localStorage.setItem('smartMessPoints', value);
+    }
+
+    function getFeedback() {
+      return JSON.parse(localStorage.getItem('smartMessFeedback') || '[]');
+    }
+
+    function saveFeedback(feedback) {
+      localStorage.setItem('smartMessFeedback', JSON.stringify(feedback));
+    }
+
+    function setAuthUser(user) {
+      localStorage.setItem('smartMessCurrentUser', JSON.stringify(user));
+    }
+
+    function getAuthUser() {
+      return JSON.parse(localStorage.getItem('smartMessCurrentUser') || 'null');
+    }
+
+    function switchAuthTab(tab) {
+      document.getElementById('loginForm').classList.toggle('hidden', tab !== 'login');
+      document.getElementById('signupForm').classList.toggle('hidden', tab !== 'signup');
+      document.getElementById('loginTabBtn').classList.toggle('active', tab === 'login');
+      document.getElementById('signupTabBtn').classList.toggle('active', tab === 'signup');
+    }
+
+    function forgotPassword() {
+      alert('Demo mode: Please use student@smartmess.com / 1234 or create a new account in Sign Up.');
+    }
+
+    document.getElementById('signupForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const name = document.getElementById('signupName').value.trim();
+      const email = document.getElementById('signupEmail').value.trim().toLowerCase();
+      const password = document.getElementById('signupPassword').value.trim();
+      const role = document.getElementById('signupRole').value;
+
+      const accounts = getAccounts();
+      if (accounts.some(acc => acc.email === email)) {
+        alert('Account already exists with this email. Please login.');
+        return;
+      }
+
+      accounts.push({ name, email, password, role });
+      saveAccounts(accounts);
+      alert('Signup successful. Now login with your new account.');
+      this.reset();
+      switchAuthTab('login');
+      document.getElementById('loginEmail').value = email;
+      document.getElementById('loginPassword').value = password;
+      document.getElementById('loginRole').value = role;
+    });
+
+    document.getElementById('loginForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+      const password = document.getElementById('loginPassword').value.trim();
+      const role = document.getElementById('loginRole').value;
+
+      const user = getAccounts().find(acc => acc.email === email && acc.password === password && acc.role === role);
+      if (!user) {
+        alert('Invalid login details. Please check email, password, and role.');
+        return;
+      }
+
+      setAuthUser(user);
+      if (document.getElementById('rememberMe').checked) {
+        localStorage.setItem('smartMessRememberedEmail', email);
+      } else {
+        localStorage.removeItem('smartMessRememberedEmail');
+      }
+      loadApp();
+    });
+
+    function logoutUser() {
+      localStorage.removeItem('smartMessCurrentUser');
+      document.getElementById('authShell').style.display = 'grid';
+      document.getElementById('appShell').classList.remove('active');
+    }
+
+    function loadApp() {
+      const user = getAuthUser();
+      if (!user) return;
+
+      document.getElementById('authShell').style.display = 'none';
+      document.getElementById('appShell').classList.add('active');
+      document.getElementById('userDisplay').textContent = `${user.name} · ${user.role}`;
+      updateWalletUI();
+      renderMeals();
+      renderBookings();
+      renderFeedback();
+      showRoleView(user.role);
+    }
+
+    function showRoleView(role) {
+      const map = { student: 'student', admin: 'admin', staff: 'staff' };
+      switchView(map[role] || 'student', document.querySelector(`.nav-links button[data-view="${map[role] || 'student'}"]`));
+    }
+
+    function switchView(viewId, btn) {
+      document.querySelectorAll('.view-section').forEach(v => v.classList.add('hidden'));
+      document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active'));
+      document.getElementById(`${viewId}-view`).classList.remove('hidden');
+      if (btn) btn.classList.add('active');
+    }
+
+    function updateWalletUI() {
+      const wallet = getWallet();
+      const points = getPoints();
+      document.getElementById('walletDisplay').textContent = `Wallet: ₹${wallet}`;
+      document.getElementById('walletStat').textContent = `₹${wallet}`;
+      document.getElementById('pointsDisplay').textContent = `Points: ${points}`;
+      document.getElementById('pointStat').textContent = points;
+    }
+
+    function addMoney() {
+      const wallet = getWallet() + 100;
+      setWallet(wallet);
+      updateWalletUI();
+      alert('₹100 added to wallet successfully.');
+    }
+
+    function renderMeals() {
+      const container = document.getElementById('mealContainer');
+      const q = document.getElementById('mealSearch').value.trim().toLowerCase();
+      const category = document.getElementById('mealCategory').value;
+      const sort = document.getElementById('mealSort').value;
+
+      let meals = [...mealData].filter(meal => {
+        const matchesText = `${meal.name} ${meal.items}`.toLowerCase().includes(q);
+        const matchesCategory = category === 'all' || meal.category === category;
+        return matchesText && matchesCategory;
+      });
+
+      if (sort === 'low-high') meals.sort((a, b) => a.price - b.price);
+      if (sort === 'high-low') meals.sort((a, b) => b.price - a.price);
+
+      container.innerHTML = meals.map(meal => `
+        <div class="meal-card">
+          <div class="meal-head">
+            <div>
+              <h3>${meal.name}</h3>
+              <small>${meal.slot}</small>
+            </div>
+            <span class="tag">${meal.tag}</span>
+          </div>
+          <ul>
+            <li>${meal.items}</li>
+            <li>Category: ${meal.category}</li>
+            <li>Price: ₹${meal.price}</li>
+          </ul>
+          <div class="row">
+            <strong>₹${meal.price}</strong>
+            <button class="small-btn" onclick="bookMeal('${meal.name}', ${meal.price}, '${meal.slot}')">Book Now</button>
+          </div>
+        </div>
+      `).join('');
+
+      if (!meals.length) {
+        container.innerHTML = `<div class="card"><p class="muted">No meals found for your filter.</p></div>`;
+      }
+    }
+
+    function generateBookingId() {
+      return 'BK' + Math.random().toString(36).slice(2, 8).toUpperCase();
+    }
+
+    function bookMeal(meal, price, slot) {
+      const wallet = getWallet();
+      const user = getAuthUser();
+      if (!user) return;
+      if (wallet < price) {
+        alert('Insufficient wallet balance. Please add money.');
+        return;
+      }
+
+      const bookingId = generateBookingId();
+      const bookings = getBookings();
+      const booking = {
+        id: bookingId,
+        user: user.name,
+        userEmail: user.email,
+        meal,
+        price,
+        slot,
+        status: 'Active',
+        createdAt: new Date().toLocaleString()
+      };
+
+      bookings.unshift(booking);
+      saveBookings(bookings);
+      setWallet(wallet - price);
+      setPoints(getPoints() + Math.floor(price / 10));
+      updateWalletUI();
+      renderBookings();
+
+      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${bookingId}`;
+      document.getElementById('qrBox').innerHTML = `<div><img src="${qrUrl}" alt="QR" /><div style="margin-top:12px; font-weight:800;">${meal}</div><small>${slot}</small></div>`;
+      document.getElementById('qrText').textContent = `Booking ID: ${bookingId}`;
+      startCountdown(15);
+      alert(`${meal} booked successfully.`);
+    }
+
+    function renderBookings() {
+      const bookings = getBookings();
+      const user = getAuthUser();
+      const studentHistory = document.getElementById('studentHistory');
+      const adminList = document.getElementById('adminBookingsList');
+      const myBookings = bookings.filter(b => user && b.userEmail === user.email);
+
+      studentHistory.innerHTML = myBookings.length ? myBookings.map(booking => `
+        <div class="history-item">
+          <div>
+            <strong>${booking.meal}</strong><br>
+            <small>${booking.createdAt}</small><br>
+            <small>${booking.id}</small>
+          </div>
+          <div style="text-align:right;">
+            <div class="status ${booking.status.toLowerCase()}">${booking.status}</div>
+            <small>₹${booking.price}</small>
+          </div>
+        </div>
+      `).join('') : `<div class="history-item"><span class="muted">No bookings yet.</span></div>`;
+
+      adminList.innerHTML = bookings.length ? bookings.map(booking => `
+        <tr>
+          <td><code>${booking.id}</code></td>
+          <td>${booking.user}</td>
+          <td>${booking.meal}</td>
+          <td>${booking.createdAt}</td>
+          <td><span class="status ${booking.status.toLowerCase()}">${booking.status}</span></td>
+        </tr>
+      `).join('') : `<tr><td colspan="5" class="muted">No bookings available.</td></tr>`;
+
+      const revenue = bookings.reduce((sum, b) => sum + b.price, 0);
+      const active = bookings.filter(b => b.status === 'Active').length;
+      const used = bookings.filter(b => b.status === 'Used').length;
+      document.getElementById('revenueStat').textContent = `₹${revenue}`;
+      document.getElementById('activeBookingStat').textContent = active;
+      document.getElementById('usedBookingStat').textContent = used;
+      document.getElementById('bookingCountStat').textContent = myBookings.length;
+      document.getElementById('timeSavedStat').textContent = `${myBookings.length * 5} min`;
+    }
+
+    function verifyEntry() {
+      const input = document.getElementById('scanInput').value.trim();
+      const result = document.getElementById('scanResult');
+      const bookings = getBookings();
+      const booking = bookings.find(b => b.id === input);
+
+      if (!input) {
+        result.textContent = 'Please enter a booking ID first.';
+        return;
+      }
+      if (!booking) {
+        result.textContent = '❌ Invalid booking ID. Entry denied.';
+        return;
+      }
+      if (booking.status === 'Used') {
+        result.textContent = '⚠️ This booking has already been used.';
+        return;
+      }
+
+      booking.status = 'Used';
+      saveBookings(bookings);
+      renderBookings();
+      result.textContent = `✅ Access granted for ${booking.user} - ${booking.meal}.`;
+    }
+
+    function clearHistory() {
+      const user = getAuthUser();
+      const filtered = getBookings().filter(b => user && b.userEmail !== user.email);
+      saveBookings(filtered);
+      renderBookings();
+      document.getElementById('qrBox').innerHTML = `<div><p class="muted">No active booking yet</p><small>Book a meal to generate QR code and booking ID</small></div>`;
+      document.getElementById('qrText').textContent = '';
+      document.getElementById('countdownText').textContent = 'No countdown active';
+    }
+
+    function startCountdown(minutes) {
+      clearInterval(countdownInterval);
+      let totalSeconds = minutes * 60;
+      const text = document.getElementById('countdownText');
+      countdownInterval = setInterval(() => {
+        const mins = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
+        const secs = String(totalSeconds % 60).padStart(2, '0');
+        text.textContent = `QR validity countdown: ${mins}:${secs}`;
+        totalSeconds--;
+        if (totalSeconds < 0) {
+          clearInterval(countdownInterval);
+          text.textContent = 'QR timer expired. Generate a new booking if needed.';
+        }
+      }, 1000);
+    }
+
+    function updateAnnouncement() {
+      const value = document.getElementById('announcementInput').value.trim();
+      if (!value) {
+        alert('Please enter an announcement.');
+        return;
+      }
+      document.getElementById('announcementText').textContent = value;
+      document.getElementById('announcementInput').value = '';
+      alert('Announcement posted successfully.');
+    }
+
+    function dismissAnnouncement() {
+      document.querySelector('.announcement').style.display = 'none';
+    }
+
+    function downloadReport() {
+      const rows = [['Booking ID', 'User', 'Meal', 'Price', 'Slot', 'Status', 'Time']];
+      getBookings().forEach(b => rows.push([b.id, b.user, b.meal, b.price, b.slot, b.status, b.createdAt]));
+      const csv = rows.map(r => r.join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'smartmess_report.csv';
+      link.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function seedDemoBookings() {
+      const demo = [
+        { id: generateBookingId(), user: 'Arun', userEmail: 'arun@college.com', meal: 'Lunch', price: 60, slot: '12:30 PM - 1:30 PM', status: 'Active', createdAt: new Date().toLocaleString() },
+        { id: generateBookingId(), user: 'Neha', userEmail: 'neha@college.com', meal: 'Breakfast', price: 40, slot: '7:30 AM - 8:30 AM', status: 'Used', createdAt: new Date().toLocaleString() }
+      ];
+      saveBookings([...demo, ...getBookings()]);
+      renderBookings();
+      alert('Demo bookings added.');
+    }
+
+    function setRating(value) {
+      selectedRating = value;
+      document.querySelectorAll('#ratingWrap button').forEach((btn, i) => {
+        btn.classList.toggle('selected', i + 1 === value);
+      });
+    }
+
+    function submitFeedback() {
+      const name = document.getElementById('feedbackName').value.trim() || 'Anonymous';
+      const message = document.getElementById('feedbackText').value.trim();
+      const improvement = document.getElementById('improvementArea').value;
+      if (!message) {
+        alert('Please enter feedback message.');
+        return;
+      }
+      const feedback = getFeedback();
+      feedback.unshift({ name, message, improvement, rating: selectedRating || 5, time: new Date().toLocaleString() });
+      saveFeedback(feedback);
+      document.getElementById('feedbackName').value = '';
+      document.getElementById('feedbackText').value = '';
+      setRating(0);
+      renderFeedback();
+      alert('Feedback submitted successfully.');
+    }
+
+    function renderFeedback() {
+      const list = document.getElementById('feedbackList');
+      const feedback = getFeedback();
+      list.innerHTML = feedback.length ? feedback.slice(0, 5).map(item => `
+        <div class="history-item">
+          <div>
+            <strong>${item.name}</strong><br>
+            <small>${item.time}</small><br>
+            <small>${item.improvement}</small>
+          </div>
+          <div style="max-width:55%; text-align:right;">
+            <strong>${'⭐'.repeat(item.rating)}</strong><br>
+            <small>${item.message}</small>
+          </div>
+        </div>
+      `).join('') : `<div class="history-item"><span class="muted">No feedback submitted yet.</span></div>`;
+    }
+
+    function applyTheme(saved) {
+      document.body.classList.toggle('dark', saved === 'dark');
+    }
+
+    function toggleTheme() {
+      const next = document.body.classList.contains('dark') ? 'light' : 'dark';
+      localStorage.setItem('smartMessTheme', next);
+      applyTheme(next);
+    }
+
+    document.getElementById('themeToggleAuth').addEventListener('click', toggleTheme);
+    document.getElementById('themeToggleApp').addEventListener('click', toggleTheme);
+
+    (function init() {
+      getAccounts();
+      applyTheme(localStorage.getItem('smartMessTheme') || 'light');
+      const remembered = localStorage.getItem('smartMessRememberedEmail');
+      if (remembered) document.getElementById('loginEmail').value = remembered;
+      if (getAuthUser()) loadApp();
+      renderFeedback();
+      renderMeals();
+      renderBookings();
+    })();
+  </script>
+</body>
+</html>
