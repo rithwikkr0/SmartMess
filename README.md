@@ -5,6 +5,7 @@
 SmartMess Pro is a modern web-based campus dining management platform that digitizes meal booking, payment processing, and entry verification through QR technology. The system reduces waiting time, improves operational efficiency, and provides a seamless dining experience for students, staff, and administrators.
 
 ---
+https://rithwikkr0.github.io/SmartMess/
 
 ## 🚀 Features
 
